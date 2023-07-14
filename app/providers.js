@@ -7,6 +7,7 @@ import {
     RainbowKitProvider,
     getDefaultWallets,
     connectorsForWallets,
+    darkTheme,
 } from '@rainbow-me/rainbowkit';
 import {
     argentWallet,
@@ -14,13 +15,13 @@ import {
     ledgerWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { bsc } from 'wagmi/chains';
+import { mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { useIsMounted } from './useIsMounted';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
     [
-        bsc
+        mainnet
     ],
     [publicProvider()],
 );
@@ -62,7 +63,17 @@ function Providers({ children }) {
     // useEffect(() => setMounted(true), []);
     return (
         <WagmiConfig config={wagmiConfig}>
-            <RainbowKitProvider chains={chains} appInfo={demoAppInfo}>
+            <RainbowKitProvider
+                chains={chains}
+                appInfo={demoAppInfo}
+                theme={darkTheme({
+                    accentColor: '#39ec4aff',
+                    accentColorForeground: 'white',
+                    borderRadius: 'small',
+                    fontStack: 'system',
+                    overlayBlur: 'small',
+                })}
+            >
                 {children}
             </RainbowKitProvider>
         </WagmiConfig>

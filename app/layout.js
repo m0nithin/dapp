@@ -1,7 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { Providers } from './providers';
-import Footer from '@/components/Footer';
 import NavBar from '@/components/Navbar';
 import SibeBar from '@/components/SibeBar';
 
@@ -12,7 +11,6 @@ export const metadata = {
   description: 'Token Dashboard',
 }
 
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -20,11 +18,10 @@ export default function RootLayout({ children }) {
         <Providers>
           <div className='h-screen w-screen flex flex-col'>
             <NavBar />
-            <div className='flex h-full'>
+            <div className='flex h-full '>
               <SibeBar />
-              <main>
+              <main className='w-full h-full pb-10'>
                 {children}
-                <Footer />
               </main>
             </div>
           </div>

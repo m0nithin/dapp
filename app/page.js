@@ -1,9 +1,9 @@
 'use client'
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { useIsMounted } from './useIsMounted';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 const { ethers } = require("ethers");
 const abi = require("./tokenAbi.json");
 const factoryAbi = require("./factoryAbi.json");
@@ -14,23 +14,32 @@ const pairAbi = require('./pairAbi.json')
 
 export default function Home() {
   const { address } = useAccount();
+  const [ethPrice, setethPrice] = useState("0000000");
   const [bnbBalance, setBNBBalance] = useState("0000000");
   const [tokenBalance, setBalance] = useState("0000000");
   const [tokenPrice, setTokenPrie] = useState("000000");
   const [tokenMarketCap, setMcap] = useState("000000");
   const mounted = useIsMounted();
 
-  const contractAddress = "0x28a9af9e1b1641c4532ad91d90a003b4a3a7dc32";
-  const routerAddress = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
-  const factoryAddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
-  const wBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
-  const usd = "0x55d398326f99059fF775485246999027B3197955"
+  /* ETH */
+  const contractAddress = "0x6982508145454Ce325dDbE47a25d4ec3d2311933";
+  const routerAddress = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+  const factoryAddress = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
+  const wETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+  const usd = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+
+  /* BSC */
+  // const contractAddress = "0x28a9af9e1b1641c4532ad91d90a003b4a3a7dc32";
+  // const routerAddress = "0x10ED43C718714eb63d5aA57B78B54704E256024E"
+  // const factoryAddress = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
+  // const wBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
+  // const usd = "0x55d398326f99059fF775485246999027B3197955"
 
   useEffect(() => {
     async function checkTokenBalance() {
 
       //provider
-      const provider = new ethers.providers.JsonRpcProvider("https://summer-powerful-meadow.bsc.discover.quiknode.pro/6e12ae53f44d456f93dd94f54bc3f48e77e75727/");
+      const provider = new ethers.providers.JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/ROQd1FNeqKzZjNiMjM211zDtXjhWX2ua");
       const tokenContract = new ethers.Contract(contractAddress, abi, provider);
       const decimalstoken = await tokenContract.decimals()
 
@@ -38,7 +47,7 @@ export default function Home() {
       const routerContract = new ethers.Contract(routerAddress, routerAbi, provider)
       const factoryContract = new ethers.Contract(factoryAddress, factoryAbi, provider);
 
-      const pairAddress = await factoryContract.getPair(contractAddress, wBNB);
+      const pairAddress = await factoryContract.getPair(contractAddress, wETH);
       const pairContract = new ethers.Contract(pairAddress, pairAbi, provider);
 
       const reserves = await pairContract.getReserves();
@@ -46,13 +55,30 @@ export default function Home() {
       const reserve1 = reserves[1];
 
 
+      //token price in BNB
+      let bnbInUsd = await routerContract.getAmountsOut(ethers.utils.parseEther("1"), [wETH, usd])
+      bnbInUsd = bnbInUsd[1] / (1 * Math.pow(10, 6))
+
+      setethPrice(bnbInUsd)
+
+      let tokenPrice = await routerContract.getAmountsOut(ethers.utils.parseEther("1"), [contractAddress, wETH])
+      tokenPrice = ethers.utils.formatEther(tokenPrice[1]);
+
+      //token price in USD
+      let finalTokenPrice = (tokenPrice * bnbInUsd)
+
       const tokenSupply = await tokenContract.totalSupply();
-      // const tokenReserve = contractAddress.toLowerCase() === pairAddress.toLowerCase() ? reserve0 : reserve1;
-      // const circulatingSupply = tokenSupply.sub(tokenReserve);
+
+      const tokenReserve = contractAddress.toLowerCase() === pairAddress.toLowerCase() ? reserve0 : reserve1;
+      const circulatingSupply = tokenSupply.sub(tokenReserve);
 
 
-      let supply = tokenSupply.toString();
+
+      let supply = circulatingSupply.toString();
       supply = ethers.utils.formatUnits(supply, decimalstoken);
+
+      const circulatingSupplyLiq = finalTokenPrice.toFixed(18) * supply
+      console.log(circulatingSupplyLiq)
 
 
       //burn supply
@@ -63,15 +89,6 @@ export default function Home() {
 
       //circulating supply
       supply = supply - burnBalance
-
-      //token price in BNB
-      let bnbInUsd = await routerContract.getAmountsOut(ethers.utils.parseEther('1'), [wBNB, usd])
-      bnbInUsd = ethers.utils.formatEther(bnbInUsd[1], 18);
-      let tokenPrice = await routerContract.getAmountsOut(1000000000, [contractAddress, wBNB])
-      tokenPrice = ethers.utils.formatEther(tokenPrice[1]);
-
-      //token price in USD
-      let finalTokenPrice = (tokenPrice * bnbInUsd)
 
 
       let tokenMarketCap = finalTokenPrice.toFixed(18) * supply
@@ -106,11 +123,55 @@ export default function Home() {
   }, [address]);
 
   return (
-    <div>
-      <h1>{bnbBalance}</h1>
-      <h1>{tokenBalance}</h1>
-      <h1>{tokenPrice}</h1>
-      <h1>{tokenMarketCap}</h1>
-    </div>
+    <section className='w-full h-full px-20 py-8 mainDash'>
+      <div className='dashSection gap-4'>
+        <div className='box eth'>
+          <h1>ETH PRICE</h1>
+          <h2>${ethPrice}</h2>
+        </div>
+        <div className='box price'>
+          <Image
+            alt="logo"
+            src={"/logo.png"}
+            width={50}
+            height={50}
+          />
+          <h1>TOKEN PRICE</h1>
+          <h2>${tokenPrice}</h2>
+        </div>
+        <div className='box mcap'>
+          <h1>MarketCap</h1>
+          <h2>{tokenMarketCap}</h2>
+        </div>
+        <div className='box tax'>
+          <h1>TAX</h1>
+          <h2>0/0</h2>
+        </div>
+        <div className='box tSupply'>
+          <h1>TOTAL SUPPLY</h1>
+          <h2>1,000,000,000</h2>
+        </div>
+        <div className='box decimal'>
+          <h1>DECIMAL</h1>
+          <h2>18</h2>
+        </div>
+        <div className='box name'>
+          <h1>TOKEN NAME</h1>
+          <h2>PEPE</h2>
+        </div>
+        <div className='box symble'>
+          <h1>TOKEN SYMBLE</h1>
+          <h2>$PEPE</h2>
+        </div>
+        <div className='box balance'>
+          <h1>OUR BALANCE</h1>
+          <h2>{bnbBalance}</h2>
+        </div>
+        <div className='box noname'>
+          <h1>OUR TOKENS</h1>
+          <h2>{tokenBalance}</h2>
+        </div>
+      </div>
+    </section>
   );
 }

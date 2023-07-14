@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --main-color: #04ff00;
+  --primary-color: #74e173;
+  --background-tranparent: #83ed815d;
+}
+
+
 * {
   margin: 0;
   padding: 0;
@@ -12,8 +19,148 @@
 
 body {
   font-family: Inter;
+  background-color: black;
+  background-image: linear-gradient(109.6deg, rgba(61, 131, 97, 1) 11.2%, rgba(28, 103, 88, 1) 91.1%);
+  overflow: hidden
+}
+
+.navLinks {
+  border: 2px solid var(--main-color);
+  background-color: var(--background-tranparent);
+}
+
+.navLinks:hover {
+  background-color: var(--main-color);
 }
 
 .barStyle {
-  @apply bg-slate-600;
+  border: 2px solid var(--main-color);
+  background-color: var(--background-tranparent);
+}
+
+
+.dashSection {
+  height: 100%;
+
+  display: grid;
+  place-content: center;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "eth price decimal"
+    "name price tSupply"
+    "symble mcap tax"
+    "noname mcap balance";
+}
+
+.tax {
+  grid-area: tax;
+}
+
+.price {
+  grid-area: price;
+}
+
+.mcap {
+  grid-area: mcap;
+}
+
+.tSupply {
+  grid-area: tSupply;
+}
+
+.lp {
+  grid-area: lp;
+}
+
+.decimal {
+  grid-area: decimal;
+}
+
+.name {
+  grid-area: name;
+}
+
+.symble {
+  grid-area: symble;
+}
+
+.balance {
+  grid-area: balance;
+}
+
+.noname {
+  grid-area: noname;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  flex-basis: content;
+  align-items: center;
+  text-align: center;
+  border: 2px solid var(--main-color);
+  border-radius: 15px;
+  padding: 1rem;
+
+  background-color: var(--background-tranparent);
+}
+
+.box h1 {
+  font-size: 1rem;
+  font-weight: 1000;
+}
+
+.box h2 {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+@media only screen and (max-width: 768px) {
+
+  .dashSection {
+    height: fit-content;
+
+    padding-bottom: 2rem;
+
+    display: flex;
+    flex-direction: column;
+
+    place-content: start;
+  }
+
+  .mainDash {
+    overflow: scroll;
+  }
+}
+
+
+.voltichange-widget {
+  width: 500px;
+  height: 460px;
+}
+
+@media (max-width: 505px) {
+  .voltichange-widget {
+    width: 85vw;
+    margin: 0 auto;
+    height: 590px;
+  }
+}
+
+.flooz-widget {
+  width: 500px;
+  height: 720px;
+  transform: scale(0.8);
+}
+
+@media (max-width: 505px) {
+  .flooz-widget {
+    width: 85vw;
+    margin: 0 auto;
+    /* height: fit-content; */
+  }
 }
