@@ -39,7 +39,7 @@ export default function Home() {
     async function checkTokenBalance() {
 
       //provider
-      const provider = new ethers.providers.JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/ROQd1FNeqKzZjNiMjM211zDtXjhWX2ua");
+      const provider = new ethers.providers.JsonRpcProvider("https://wild-necessary-sailboat.discover.quiknode.pro/6e859a94316331c04b67706fac4ed970dc8681ab/");
       const tokenContract = new ethers.Contract(contractAddress, abi, provider);
       const decimalstoken = await tokenContract.decimals()
 
@@ -124,7 +124,7 @@ export default function Home() {
 
   return (
     <section className='w-full h-full px-20 py-8 mainDash'>
-      <div className='dashSection gap-4'>
+      <div className='dashSection gap-4 '>
         <div className='box eth'>
           <h1>ETH PRICE</h1>
           <h2>${ethPrice}</h2>
@@ -136,7 +136,7 @@ export default function Home() {
             width={50}
             height={50}
           />
-          <h1>TOKEN PRICE</h1>
+          <h1>TOKEN $PRICE</h1>
           <h2>${tokenPrice}</h2>
         </div>
         <div className='box mcap'>

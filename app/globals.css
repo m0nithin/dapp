@@ -122,9 +122,8 @@ body {
 @media only screen and (max-width: 768px) {
 
   .dashSection {
+    margin: 2rem 0px;
     height: fit-content;
-
-    padding-bottom: 2rem;
 
     display: flex;
     flex-direction: column;
