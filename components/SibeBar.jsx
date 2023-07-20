@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-const SibeBar = () => {
+const SibeBar = ({ active , toggleDivVisibility }) => {
 
   const navLinks = [
     {
@@ -18,10 +18,14 @@ const SibeBar = () => {
     },
   ]
   return (
-    <div className='barStyle sm:flex hidden h-full py-6'>
+    <div className= {`barStyle sm:flex  ${active ? 'flex' : 'hidden'} sm:static ${active ? ' absolute' : 'static'} h-full py-6`}>
       <ul className='flex flex-col gap-2 '>
         {navLinks.map((link, index) => (
-          <Link key={index} href={link.link} className='w-full px-8 p-5 text-center font-extrabold navLinks'>
+          <Link
+            key={index}
+            href={link.link}
+            onClick={toggleDivVisibility}
+            className='w-full px-8 p-5 text-center font-extrabold navLinks'>
             {link.name}
           </Link>
         ))}

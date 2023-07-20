@@ -2,6 +2,7 @@
 
 import { useAccount } from 'wagmi';
 import { useIsMounted } from './useIsMounted';
+import { setethPrice } from './token';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 const { ethers } = require("ethers");
@@ -20,6 +21,8 @@ export default function Home() {
   const [tokenPrice, setTokenPrie] = useState("000000");
   const [tokenMarketCap, setMcap] = useState("000000");
   const mounted = useIsMounted();
+
+  // const ethPrice = setethPrice()
 
   /* ETH */
   const contractAddress = "0x6982508145454Ce325dDbE47a25d4ec3d2311933";
